@@ -1,28 +1,78 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <p>Page: {{ this.currentPage }}</p>
+    <UserList
+      v-bind:users="users"
+    />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import axios from "axios";
+import UserList from '@/components/user-list';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    UserList,
+  },
+  mounted() {
+    this.getData();
+
+    const userList = document.querySelector('.user-list');
+    userList.addEventListener('scroll', () => {
+
+      if(userList.scrollTop + userList.clientHeight >= userList.scrollHeight) {
+        if (this.totalPages !== this.currentPage) {
+          this.currentPage++;
+        } else {
+          this.currentPage = 1;
+        }
+
+        userList.scrollTop = 0;
+        this.getData();
+      }
+    });
+  },
+  methods: {
+    getData() {
+      axios
+      .get(`https://reqres.in/api/users?page=${this.currentPage}`)
+      .then((response) => {
+        this.totalPages = response.data.total_pages;
+        this.users = response.data.data;
+      });
+    }
+  },
+  data() {
+    return {
+      users: [],
+      currentPage: 1,
+      totalPages: 1,
+      scrollPosition: 0,
+    }
   }
 }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style scoped>
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
+
+body {
+  position: relative;
+}
+
+#app {
+  font-family: sans-serif;
+}
+
+p {
+  text-align: center;
+  font-size: 2em;
+}
+
 </style>
