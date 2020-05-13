@@ -1,29 +1,20 @@
 <template>
-  <div>
-    <ul class="user-list">
-      <UserItem
-        v-for="user of users"
-        v-bind:user="user"
-        v-bind:key="user.name"
-        v-on:open-modal="openModal"
-      />
-    </ul>
-
-    <ModalUser
-      v-bind:user="openedUser"
-      v-on:close-modal="closeModal"
+  <ul class="users__list">
+    <UserItem
+      v-for="user of users"
+      v-bind:user="user"
+      v-bind:key="user.name"
+      v-on:open-modal="openModal"
     />
-  </div>
+  </ul>
 </template>
 
 <script>
 import UserItem from '@/components/user-item';
-import ModalUser from '@/components/modal-user';
 
 export default {
   components: {
     UserItem,
-    ModalUser,
   },
   props: ['users'],
   data() {
@@ -33,28 +24,22 @@ export default {
   },
   methods: {
     openModal(user) {
-      this.openedUser = user;
+      this.$emit('open-modal', user);
     },
-    closeModal() {
-      document.querySelector('.modal-user').classList.remove('open');
-      setTimeout(() => {
-        this.openedUser = null;
-      }, 500);
-    }
   },
 }
 </script>
 
 <style scoped>
-  ul {
+  .users__list {
     display: grid;
-    gap: 0.2rem;
-    list-style: none;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    grid-column: 1 / 3;
+    width: 100%;
+    max-height: 60vh;
     margin: 0;
     padding: 0;
-    max-width: 768px;
-    margin: 0 auto;
-    max-height: 80vh;
-    overflow-y: scroll;
+    list-style: none;
   }
 </style>

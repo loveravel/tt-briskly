@@ -1,10 +1,10 @@
 <template>
   <div
-    class="modal-user open"
+    class="modal-user"
     v-on:mousedown="mousedown"
-    v-if="user !== null"
+    v-bind:class="{opened: opened}"
   >
-    <div class="modal-user__info">
+    <div v-if="user" class="modal-user__info">
       <img v-bind:src="user.avatar" alt="Аватар пользователя">
       <ul>
         <li>id: {{ user.id }}</li>
@@ -15,12 +15,11 @@
     </div>
     <button type="button" v-on:click="$emit('close-modal')" aria-label="Закрыть окно"></button>
   </div>
-  <div v-else class="modal-user"></div>
 </template>
 
 <script>
 export default {
-  props: ['user'],
+  props: ['user', 'opened'],
   methods: {
     mousedown(evt) {
       const modal = document.querySelector('.modal-user');
@@ -69,29 +68,33 @@ export default {
 
 <style scoped>
   .modal-user {
-    position: fixed;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    min-width: 600px;
-    min-height: 200px;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    transform: translateX(-100%);
+    width: 500px;
     padding: 3rem;
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: rgba(0, 0, 0, 0.5);
     color: whitesmoke;
-    transition: bottom 0.5s ease-out;
+    transition: opacity 0.35s ease-out;
+    border: 1px solid whitesmoke;
+    opacity: 0;
   }
 
-  .modal-user.open {
-    bottom: 50%;
-    transform: translate(-50%, 50%);
-    transition: bottom 0.5s ease-in;
+  .modal-user.opened {
+    opacity: 1;
+    transition: opacity 0.35s ease-in;
   }
-
 
   .modal-user__info {
     display: grid;
     grid-template-columns: auto 1fr;
     gap: 2rem;
+  }
+
+  img {
+    width: 100px;
+    height: 100px;
   }
 
   ul {
